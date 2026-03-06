@@ -10,7 +10,7 @@ import NewsTickerWrapper from '@/components/NewsTickerWrapper';
 import Footer from '@/components/Footer';
 import ShareButtons from '@/components/ShareButtons';
 import { Calendar } from 'lucide-react';
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 function getTimeAgo(date: string): string {
   const now = new Date();
@@ -95,9 +95,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const relatedNews = await getRelatedNews(article.category, article.id);
   const articleUrl = `${SITE_URL}/article/${article.slug || article.id}`;
 
-  const sanitizedContent = DOMPurify.sanitize(article.content, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'img', 'style'],
-    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style'],
+  const sanitizedContent = sanitizeHtml(article.content, {
+    allowedTags: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'img', 'style'],
+    allowedAttributes: {
+      a: ['href', 'target', 'rel'],
+      img: ['src', 'alt', 'class', 'style'],
+      '*': ['class', 'style'],
+    },
   });
 
   const articleSchema = {
