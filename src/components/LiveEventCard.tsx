@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { LiveEvent } from '@/types/news';
-import { getCategoryLabel } from '@/lib/utils';
+import { getCategoryLabel, formatTimeAgo } from '@/lib/utils';
 import { Radio, Clock, MessageSquare } from 'lucide-react';
 import NewsImage from '@/components/NewsImage';
 
@@ -8,14 +8,6 @@ interface LiveEventCardProps {
   event: LiveEvent;
 }
 
-function getTimeAgo(date: string): string {
-  const now = new Date();
-  const past = new Date(date);
-  const diff = Math.floor((now.getTime() - past.getTime()) / 1000 / 60);
-  if (diff < 60) return `منذ ${diff} دقيقة`;
-  if (diff < 1440) return `منذ ${Math.floor(diff / 60)} ساعة`;
-  return `منذ ${Math.floor(diff / 1440)} يوم`;
-}
 
 export default function LiveEventCard({ event }: LiveEventCardProps) {
   const isActive = event.status === 'active';
@@ -83,7 +75,7 @@ export default function LiveEventCard({ event }: LiveEventCardProps) {
             </div>
             <div className="flex items-center gap-1">
               <Clock size={14} />
-              <span>{getTimeAgo(event.updated_at)}</span>
+              <span>{formatTimeAgo(event.updated_at)}</span>
             </div>
           </div>
         </div>

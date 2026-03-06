@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { News } from '@/types/news';
-import { getCategoryLabel } from '@/lib/utils';
+import { getCategoryLabel, formatTimeAgo } from '@/lib/utils';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, ChevronLeft } from 'lucide-react';
@@ -10,14 +10,6 @@ interface NewsCardProps {
   news: News;
 }
 
-function getTimeAgo(date: string): string {
-  const now = new Date();
-  const past = new Date(date);
-  const diff = Math.floor((now.getTime() - past.getTime()) / 1000 / 60);
-  if (diff < 60) return `منذ ${diff} دقيقة`;
-  if (diff < 1440) return `منذ ${Math.floor(diff / 60)} ساعة`;
-  return `منذ ${Math.floor(diff / 1440)} يوم`;
-}
 
 export default function NewsCard({ news }: NewsCardProps) {
   const articleUrl = `/article/${news.slug || news.id}`;
@@ -59,7 +51,7 @@ export default function NewsCard({ news }: NewsCardProps) {
           )}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar size={16} className="text-gold" aria-hidden="true" />
-            <time className="font-medium">{getTimeAgo(news.created_at)}</time>
+            <time className="font-medium">{formatTimeAgo(news.created_at)}</time>
           </div>
         </div>
         <Link href={articleUrl}>

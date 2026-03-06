@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import NewsImage from '@/components/NewsImage';
 import { supabase } from '@/lib/supabase';
 import { News } from '@/types/news';
-import { getCategoryLabel } from '@/lib/utils';
+import { getCategoryLabel, formatTimeAgo } from '@/lib/utils';
 import { SITE_URL, SITE_NAME } from '@/lib/constants';
 import Navbar from '@/components/Navbar';
 import NewsTickerWrapper from '@/components/NewsTickerWrapper';
@@ -14,14 +14,6 @@ import sanitizeHtml from 'sanitize-html';
 
 export const dynamic = 'force-dynamic';
 
-function getTimeAgo(date: string): string {
-  const now = new Date();
-  const past = new Date(date);
-  const diff = Math.floor((now.getTime() - past.getTime()) / 1000 / 60);
-  if (diff < 60) return `منذ ${diff} دقيقة`;
-  if (diff < 1440) return `منذ ${Math.floor(diff / 60)} ساعة`;
-  return `منذ ${Math.floor(diff / 1440)} يوم`;
-}
 
 function getCategoryPath(category: string): string {
   const paths: Record<string, string> = {
@@ -64,14 +56,19 @@ async function getArticle(slug: string): Promise<News | null> {
 }
 
 async function getRelatedNews(category: string, excludeId: string): Promise<News[]> {
-  const { data } = await supabase
-    .from('news')
-    .select('*, editors(name)')
-    .eq('category', category)
-    .neq('id', excludeId)
-    .order('created_at', { ascending: false })
-    .limit(4);
-  return data || [];
+  try {
+    const { data } = await supabase
+      .from('news')
+      .select('*, editors(name)')
+      .eq('category', category)
+      .neq('id', excludeId)
+      .order('created_at', { ascending: false })
+      .limit(4);
+    return data || [];
+  } catch (e) {
+    console.error('getRelatedNews failed:', e);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -119,14 +116,20 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const relatedNews = await getRelatedNews(article.category, article.id);
   const articleUrl = `${SITE_URL}/article/${article.slug || article.id}`;
 
-  const sanitizedContent = sanitizeHtml(article.content, {
-    allowedTags: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'img', 'style'],
-    allowedAttributes: {
-      a: ['href', 'target', 'rel'],
-      img: ['src', 'alt', 'class', 'style'],
-      '*': ['class', 'style'],
-    },
-  });
+  let sanitizedContent = '';
+  try {
+    sanitizedContent = sanitizeHtml(article.content || '', {
+      allowedTags: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'img', 'style'],
+      allowedAttributes: {
+        a: ['href', 'target', 'rel'],
+        img: ['src', 'alt', 'class', 'style'],
+        '*': ['class', 'style'],
+      },
+    });
+  } catch (e) {
+    console.error('sanitizeHtml failed:', e);
+    sanitizedContent = article.content || '';
+  }
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -193,7 +196,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   )}
                   <div className="flex items-center gap-2">
                     <Calendar size={18} className="text-gold" aria-hidden="true" />
-                    <time dateTime={article.created_at}>{getTimeAgo(article.created_at)}</time>
+                    <time dateTime={article.created_at}>{formatTimeAgo(article.created_at)}</time>
                   </div>
                 </div>
                 <ShareButtons url={articleUrl} title={article.title} />
@@ -201,7 +204,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </header>
 
             {/* Article Image */}
-            <figure className="mb-8 rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+            <figure className="mb-8 rounded-lg overflow-hidden max-h-[450px]" style={{ aspectRatio: '16/9' }}>
               <NewsImage
                 src={article.image_url}
                 alt={article.title}
@@ -241,11 +244,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <aside className="mt-12 p-6 bg-secondary border border-border rounded-lg" role="complementary" aria-label="معلومات المحرر">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-2xl font-bold shrink-0">
-                    {article.editors.name.charAt(0)}
+                    {article.editors.name?.charAt(0) || '✍'}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-foreground">{article.editors.name}</h3>
-                    <p className="text-sm text-gold font-medium mb-2">{article.editors.position}</p>
+                    <h3 className="text-lg font-bold text-foreground">{article.editors.name || 'محرر'}</h3>
+                    <p className="text-sm text-gold font-medium mb-2">{article.editors.position || 'محرر'}</p>
                     <p className="text-sm text-muted-foreground">{article.editors.bio || 'تحرير وإشراف على هذا المقال'}</p>
                   </div>
                 </div>
@@ -274,7 +277,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                               {news.title}
                             </h3>
                             <time className="text-sm text-muted-foreground mt-2 block" dateTime={news.created_at}>
-                              {getTimeAgo(news.created_at)}
+                              {formatTimeAgo(news.created_at)}
                             </time>
                           </div>
                         </div>
