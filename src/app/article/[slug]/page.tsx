@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
+import NewsImage from '@/components/NewsImage';
 import { supabase } from '@/lib/supabase';
 import { News } from '@/types/news';
 import { getCategoryLabel } from '@/lib/utils';
@@ -11,6 +11,8 @@ import Footer from '@/components/Footer';
 import ShareButtons from '@/components/ShareButtons';
 import { Calendar } from 'lucide-react';
 import sanitizeHtml from 'sanitize-html';
+
+export const dynamic = 'force-dynamic';
 
 function getTimeAgo(date: string): string {
   const now = new Date();
@@ -29,14 +31,36 @@ function getCategoryPath(category: string): string {
 }
 
 async function getArticle(slug: string): Promise<News | null> {
-  const { data, error } = await supabase
-    .from('news')
-    .select('*, editors(name, position, bio)')
-    .or(`slug.eq.${slug},id.eq.${slug}`)
-    .single();
+  try {
+    // Try by slug first
+    const { data: bySlug, error: slugError } = await supabase
+      .from('news')
+      .select('*, editors(name, position, bio)')
+      .eq('slug', decodeURIComponent(slug))
+      .maybeSingle();
 
-  if (error || !data) return null;
-  return data;
+    if (slugError) {
+      console.error('Error fetching by slug:', slugError.message);
+    }
+
+    if (bySlug) return bySlug;
+
+    // Fallback: try by ID
+    const { data: byId, error: idError } = await supabase
+      .from('news')
+      .select('*, editors(name, position, bio)')
+      .eq('id', slug)
+      .maybeSingle();
+
+    if (idError) {
+      console.error('Error fetching by id:', idError.message);
+    }
+
+    return byId || null;
+  } catch (e) {
+    console.error('getArticle crashed:', e);
+    return null;
+  }
 }
 
 async function getRelatedNews(category: string, excludeId: string): Promise<News[]> {
@@ -177,19 +201,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </header>
 
             {/* Article Image */}
-            {article.image_url && (
-              <figure className="mb-8 rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                <Image
-                  src={article.image_url}
-                  alt={article.title}
-                  width={896}
-                  height={504}
-                  className="w-full h-full object-cover"
-                  priority
-                  unoptimized={article.image_url.includes('twimg.com')}
-                />
-              </figure>
-            )}
+            <figure className="mb-8 rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+              <NewsImage
+                src={article.image_url}
+                alt={article.title}
+                className="w-full h-full object-cover"
+                priority
+                category={getCategoryLabel(article.category)}
+              />
+            </figure>
 
             {/* Excerpt */}
             {article.excerpt && (
@@ -212,18 +232,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             {/* Article Content */}
             <section
-              className="prose prose-2xl max-w-none 
-                prose-headings:text-foreground prose-headings:mb-4 prose-headings:mt-6 prose-headings:font-bold
-                prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl 
-                prose-p:text-foreground prose-p:leading-[2] prose-p:text-xl prose-p:mb-4 prose-p:text-justify 
-                prose-strong:text-foreground prose-strong:font-bold
-                prose-em:italic prose-em:text-foreground
-                prose-a:text-gold hover:prose-a:text-gold/80 prose-a:no-underline
-                prose-li:text-foreground prose-li:leading-[2] prose-li:text-xl
-                prose-ul:mb-4 prose-ol:mb-4
-                prose-img:rounded-lg prose-img:shadow-md prose-img:my-6
-                prose-blockquote:border-gold prose-blockquote:bg-secondary/30 prose-blockquote:rounded-lg prose-blockquote:py-2
-                [&_*]:text-right"
+              className="prose prose-2xl max-w-none"
               dangerouslySetInnerHTML={{ __html: sanitizedContent }}
             />
 
@@ -252,16 +261,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     <article key={news.id}>
                       <a href={`/article/${news.slug || news.id}`} className="group">
                         <div className="flex gap-4 p-4 border border-border rounded-lg hover:border-gold transition-all">
-                          {news.image_url && (
-                            <Image
+                          <div className="w-24 h-24 shrink-0 rounded-md overflow-hidden relative">
+                            <NewsImage
                               src={news.image_url}
                               alt={news.title}
-                              width={96}
-                              height={96}
-                              className="w-24 h-24 object-cover rounded-md"
-                              unoptimized={news.image_url.includes('twimg.com')}
+                              className="object-cover"
+                              sizes="96px"
                             />
-                          )}
+                          </div>
                           <div className="flex-1">
                             <h3 className="font-bold group-hover:text-gold transition-colors line-clamp-2">
                               {news.title}

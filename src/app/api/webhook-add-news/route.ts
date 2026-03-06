@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { validateWordCount, optimizeSEO } from '@/lib/ai-seo';
 
 const WEBHOOK_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || '2080db46-34ae-40f6-bd22-1b88ca0bffa8';
 
@@ -39,18 +40,62 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // --- Layer 1: Word count validation (minimum 400 words) ---
+    const { valid, wordCount } = validateWordCount(body.content);
+    if (!valid) {
+      return NextResponse.json(
+        {
+          error: 'المقال قصير جداً',
+          message: `المقال يحتوي على ${wordCount} كلمة فقط. الحد الأدنى المطلوب هو 400 كلمة.`,
+          wordCount,
+          minRequired: 400,
+        },
+        { status: 422 }
+      );
+    }
+
+    // --- Layer 2: AI SEO optimization ---
+    const skipAI = body.skip_ai === true;
+    let seoData = {
+      title: body.title,
+      excerpt: body.excerpt || null,
+      meta_description: body.meta_description || body.excerpt || null,
+      keywords: body.keywords || null,
+      key_points: body.key_points || null,
+    };
+
+    let aiOptimized = false;
+
+    if (!skipAI && process.env.OPENAI_API_KEY) {
+      try {
+        const aiResult = await optimizeSEO(body.title, body.content, body.category || 'local');
+
+        seoData = {
+          title: aiResult.title || body.title,
+          excerpt: body.excerpt || aiResult.excerpt || null,
+          meta_description: aiResult.meta_description || body.excerpt || null,
+          keywords: aiResult.keywords.length > 0 ? aiResult.keywords : body.keywords || null,
+          key_points: aiResult.key_points.length > 0 ? aiResult.key_points : body.key_points || null,
+        };
+        aiOptimized = true;
+      } catch (aiError) {
+        console.error('AI SEO optimization failed, proceeding without it:', aiError);
+      }
+    }
+
+    // --- Build and insert news data ---
     const newsData = {
       id: body.id || crypto.randomUUID(),
-      title: body.title,
+      title: seoData.title,
       content: body.content,
-      slug: body.slug || generateSlug(body.title),
-      excerpt: body.excerpt || null,
+      slug: body.slug || generateSlug(seoData.title),
+      excerpt: seoData.excerpt,
       image_url: body.image_url || null,
       category: body.category || 'local',
-      keywords: body.keywords || null,
-      meta_description: body.meta_description || body.excerpt || null,
+      keywords: seoData.keywords,
+      meta_description: seoData.meta_description,
       canonical_url: body.canonical_url || null,
-      key_points: body.key_points || null,
+      key_points: seoData.key_points,
       editor_id: body.editor_id || null,
       location: body.location || null,
     };
@@ -79,6 +124,8 @@ export async function POST(request: NextRequest) {
         category: data.category,
         created_at: data.created_at,
       },
+      wordCount,
+      aiOptimized,
     }, { status: 201 });
 
   } catch (err) {
@@ -96,5 +143,12 @@ export async function GET() {
     endpoint: '/api/webhook-add-news',
     method: 'POST',
     auth: 'Bearer token required',
+    validation: {
+      minWordCount: 400,
+      aiSeoOptimization: !!process.env.OPENAI_API_KEY,
+    },
+    options: {
+      skip_ai: 'Set to true to skip AI SEO optimization',
+    },
   });
 }

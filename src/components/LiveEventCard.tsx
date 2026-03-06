@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { LiveEvent } from '@/types/news';
 import { getCategoryLabel } from '@/lib/utils';
 import { Radio, Clock, MessageSquare } from 'lucide-react';
+import NewsImage from '@/components/NewsImage';
 
 interface LiveEventCardProps {
   event: LiveEvent;
@@ -27,20 +27,13 @@ export default function LiveEventCard({ event }: LiveEventCardProps) {
       <article className={`bg-card rounded-2xl border border-border/50 overflow-hidden shadow-elegant hover:shadow-xl transition-all duration-300 hover:border-gold/30 ${isArchived ? 'opacity-60 grayscale-[30%]' : ''}`}>
         {/* Image Section */}
         <div className="relative h-48 overflow-hidden">
-          {event.main_image_url ? (
-            <Image
-              src={event.main_image_url}
-              alt={event.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              unoptimized={event.main_image_url.includes('twimg.com')}
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-              <Radio className="w-16 h-16 text-gold/50" />
-            </div>
-          )}
+          <NewsImage
+            src={event.main_image_url}
+            alt={event.title}
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            category={getCategoryLabel(event.category)}
+          />
           
           {/* Status Badge */}
           <div className="absolute top-4 right-4 flex items-center gap-2">

@@ -43,6 +43,12 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png', sizes: 'any' },
+    ],
+    apple: { url: '/favicon.png', sizes: '512x512' },
+  },
   openGraph: {
     type: "website",
     locale: "ar_SA",
@@ -51,7 +57,7 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} - أول شبكة أخبار سعودية بالذكاء الاصطناعي`,
     description: SITE_DESCRIPTION,
     images: [{
-      url: `${SITE_URL}/icon.png`,
+      url: `${SITE_URL}/favicon.png`,
       width: 512,
       height: 512,
       alt: SITE_NAME,
@@ -63,7 +69,7 @@ export const metadata: Metadata = {
     creator: "@Nfoud_ai",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/icon.png`],
+    images: [`${SITE_URL}/favicon.png`],
   },
   robots: {
     index: true,
@@ -85,7 +91,7 @@ const organizationSchema = {
   "url": SITE_URL,
   "logo": {
     "@type": "ImageObject",
-    "url": `${SITE_URL}/icon.png`,
+    "url": `${SITE_URL}/favicon.png`,
   },
   "sameAs": [
     "https://x.com/Nfoud_ai",
@@ -124,10 +130,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://wqcikbeglxfptnaamnpj.supabase.co" />
         <link rel="dns-prefetch" href="https://wqcikbeglxfptnaamnpj.supabase.co" />
-        <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/icon.png" />
-        <meta name="msapplication-TileImage" content="/icon.png" />
+        <meta name="msapplication-TileImage" content="/favicon.png" />
       </head>
       <body className={`${cairo.variable} font-sans antialiased`} suppressHydrationWarning>
         {children}

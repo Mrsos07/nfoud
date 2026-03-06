@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { supabase } from '@/lib/supabase';
 import { LiveEvent } from '@/types/news';
 import LiveEventCard from '@/components/LiveEventCard';
+import NewsTickerWrapper from '@/components/NewsTickerWrapper';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Radio } from 'lucide-react';
@@ -39,19 +40,25 @@ export default async function LiveEventsPage() {
   const endedEvents = events.filter(e => e.status === 'ended');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
+      <NewsTickerWrapper />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center gap-2 mb-8">
-          <Radio className="w-8 h-8 text-red-600 animate-pulse" />
-          <h1 className="text-3xl font-bold">الأحداث الحية</h1>
+      <header className="bg-primary text-primary-foreground py-10 md:py-16 border-b-2 border-gold">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-3 mb-3">
+            <Radio className="text-destructive animate-pulse" size={36} aria-hidden="true" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">الأحداث الحية</h1>
+          </div>
+          <p className="text-base md:text-xl text-gold">تابع التغطيات المباشرة للأخبار العاجلة</p>
         </div>
+      </header>
 
+      <main className="flex-1 container mx-auto px-4 py-8 md:py-12">
         {activeEvents.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <span className="w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
+          <section className="mb-12" aria-labelledby="active-events-heading">
+            <h2 id="active-events-heading" className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <span className="w-3 h-3 bg-destructive rounded-full animate-pulse"></span>
               مباشر الآن
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -63,8 +70,8 @@ export default async function LiveEventsPage() {
         )}
 
         {endedEvents.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold mb-6">أحداث منتهية</h2>
+          <section aria-labelledby="ended-events-heading">
+            <h2 id="ended-events-heading" className="text-2xl font-bold mb-6">أحداث منتهية</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {endedEvents.map((event) => (
                 <LiveEventCard key={event.id} event={event} />
@@ -75,7 +82,7 @@ export default async function LiveEventsPage() {
 
         {events.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">لا توجد أحداث حية حالياً</p>
+            <p className="text-muted-foreground text-lg">لا توجد أحداث حية حالياً</p>
           </div>
         )}
       </main>

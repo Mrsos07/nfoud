@@ -2,12 +2,15 @@
   "css.validate": false,
   "scss.validate": false,
   "less.validate": false,
-  "css.customData": [],
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "css.customData": [".vscode/tailwind.css-data.json"],
   "editor.quickSuggestions": {
     "strings": "on"
   },
   "tailwindCSS.experimental.classRegex": [],
   "files.associations": {
-    "*.css": "tailwindcss"
+    "*.css": "tailwindcss",
+    "globals.css": "tailwindcss"
   }
 }
