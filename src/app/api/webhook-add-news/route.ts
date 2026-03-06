@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     const newsData = {
+      id: body.id || crypto.randomUUID(),
       title: body.title,
       content: body.content,
       slug: body.slug || generateSlug(body.title),

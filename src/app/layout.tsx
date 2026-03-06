@@ -122,8 +122,8 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://vraxaknyauqlnyardhla.supabase.co" />
-        <link rel="dns-prefetch" href="https://vraxaknyauqlnyardhla.supabase.co" />
+        <link rel="preconnect" href="https://wqcikbeglxfptnaamnpj.supabase.co" />
+        <link rel="dns-prefetch" href="https://wqcikbeglxfptnaamnpj.supabase.co" />
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
