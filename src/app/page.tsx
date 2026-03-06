@@ -90,7 +90,7 @@ export default async function Home() {
       <NewsTickerWrapper />
       
       {/* Hero Section */}
-      <header className="relative h-[600px] overflow-hidden">
+      <header className="relative h-[400px] sm:h-[500px] md:h-[600px] overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src="/nafud-desert-hero.jpg"
@@ -106,13 +106,13 @@ export default async function Home() {
             <span className="inline-block px-5 py-2.5 bg-accent/90 text-accent-foreground rounded-full text-sm font-extrabold mb-6 animate-fade-in backdrop-blur-sm tracking-wide">
               أخبار حصرية وموثوقة مدعومة بالذكاء الاصطناعي
             </span>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 text-gold animate-fade-in leading-[1.15]" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 md:mb-6 text-gold animate-fade-in leading-[1.15]" style={{ animationDelay: '0.1s' }}>
               نفود – شبكة أخبار سعودية بالذكاء الاصطناعي
             </h1>
-            <p className="text-2xl md:text-3xl mb-6 animate-fade-in font-bold text-white/95" style={{ animationDelay: '0.2s' }}>
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 md:mb-6 animate-fade-in font-bold text-white/95" style={{ animationDelay: '0.2s' }}>
               آخر الأخبار والتحليلات من المملكة والعالم
             </p>
-            <p className="text-lg md:text-xl mb-8 text-white/80 leading-loose animate-fade-in max-w-2xl font-medium" style={{ animationDelay: '0.3s' }}>
+            <p className="hidden sm:block text-base md:text-lg lg:text-xl mb-6 md:mb-8 text-white/80 leading-loose animate-fade-in max-w-2xl font-medium" style={{ animationDelay: '0.3s' }}>
               منصة إخبارية سعودية تجمع بين الموثوقية الصحفية وتقنيات الذكاء الاصطناعي لتقديم أحدث الأخبار السياسية والاقتصادية والمحلية والرياضية بأسلوب عصري واحترافي
             </p>
           </div>
@@ -121,23 +121,23 @@ export default async function Home() {
       </header>
 
       {/* Categories Quick Access */}
-      <nav className="py-12 -mt-16 relative z-10" aria-label="الوصول السريع للأقسام">
+      <nav className="py-6 sm:py-8 md:py-12 -mt-8 sm:-mt-12 md:-mt-16 relative z-10" aria-label="الوصول السريع للأقسام">
         <div className="container mx-auto px-4">
           <h2 className="sr-only">أقسام الأخبار</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {categories.map((category, index) => {
               const IconComponent = iconMap[category.icon];
               return (
                 <Link
                   key={category.name}
                   href={category.link}
-                  className="flex flex-row-reverse items-center justify-center gap-4 bg-card p-8 rounded-2xl border border-border/50 shadow-elegant hover:shadow-xl transition-all duration-300 group animate-slide-up"
+                  className="flex flex-row-reverse items-center justify-center gap-2 sm:gap-3 md:gap-4 bg-card p-4 sm:p-6 md:p-8 rounded-xl md:rounded-2xl border border-border/50 shadow-elegant hover:shadow-xl transition-all duration-300 group animate-slide-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
                   aria-label={`الانتقال إلى قسم ${category.name}`}
                 >
-                  <span className="text-lg font-bold group-hover:text-gold transition-colors">{category.name}</span>
-                  <div className="p-4 bg-secondary rounded-full group-hover:bg-accent/10 transition-colors">
-                    <IconComponent className={`${category.color} group-hover:scale-110 transition-transform duration-300`} size={36} aria-hidden="true" />
+                  <span className="text-sm sm:text-base md:text-lg font-bold group-hover:text-gold transition-colors">{category.name}</span>
+                  <div className="p-2 sm:p-3 md:p-4 bg-secondary rounded-full group-hover:bg-accent/10 transition-colors">
+                    <IconComponent className={`${category.color} group-hover:scale-110 transition-transform duration-300`} size={24} aria-hidden="true" />
                   </div>
                 </Link>
               );
@@ -147,15 +147,15 @@ export default async function Home() {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-16">
+      <main className="flex-1 container mx-auto px-4 py-8 md:py-16">
         {/* Live Events Section */}
-        <section className="mb-20" aria-labelledby="live-events-heading">
-          <header className="flex items-center mb-12">
-            <div className="flex items-center gap-4 flex-1">
+        <section className="mb-12 md:mb-20" aria-labelledby="live-events-heading">
+          <header className="flex items-center mb-6 md:mb-12">
+            <div className="flex items-center gap-3 md:gap-4 flex-1">
               <div className="p-2 bg-destructive/10 rounded-full">
-                <Radio className="w-6 h-6 text-destructive animate-pulse" aria-hidden="true" />
+                <Radio className="w-5 h-5 md:w-6 md:h-6 text-destructive animate-pulse" aria-hidden="true" />
               </div>
-              <h2 id="live-events-heading" className="text-4xl font-bold text-foreground">تغطيات حية</h2>
+              <h2 id="live-events-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">تغطيات حية</h2>
               <div className="h-1.5 flex-1 bg-gradient-to-r from-destructive/50 to-transparent rounded-full" aria-hidden="true"></div>
             </div>
           </header>
@@ -212,16 +212,16 @@ export default async function Home() {
         </section>
 
         {/* Featured News Section */}
-        <section className="mb-20" aria-labelledby="featured-news-heading">
-          <header className="flex items-center mb-12">
-            <div className="flex items-center gap-4 flex-1">
+        <section className="mb-12 md:mb-20" aria-labelledby="featured-news-heading">
+          <header className="flex items-center mb-6 md:mb-12">
+            <div className="flex items-center gap-3 md:gap-4 flex-1">
               <div className="h-1.5 w-16 gradient-gold rounded-full" aria-hidden="true"></div>
-              <h2 id="featured-news-heading" className="text-4xl font-bold text-foreground">أحدث الأخبار</h2>
+              <h2 id="featured-news-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">أحدث الأخبار</h2>
               <div className="h-1.5 flex-1 bg-gradient-to-r from-gold/50 to-transparent rounded-full" aria-hidden="true"></div>
             </div>
           </header>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {featuredNews.length === 0 ? (
               <div className="col-span-3 text-center py-20">
                 <p className="text-xl text-muted-foreground">لا توجد أخبار متاحة حالياً</p>
@@ -244,20 +244,20 @@ export default async function Home() {
         </section>
 
         {/* Newsletter CTA */}
-        <section className="relative overflow-hidden rounded-3xl shadow-xl mb-16" aria-labelledby="newsletter-heading">
+        <section className="relative overflow-hidden rounded-2xl md:rounded-3xl shadow-xl mb-10 md:mb-16" aria-labelledby="newsletter-heading">
           <div className="absolute inset-0 gradient-gold opacity-95" aria-hidden="true"></div>
-          <div className="relative p-16 text-center">
-            <h2 id="newsletter-heading" className="text-4xl font-bold mb-6 text-primary">اشترك في النشرة الإخبارية</h2>
-            <p className="text-xl mb-10 max-w-2xl mx-auto text-primary/90 leading-relaxed">
+          <div className="relative p-6 sm:p-10 md:p-16 text-center">
+            <h2 id="newsletter-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-primary">اشترك في النشرة الإخبارية</h2>
+            <p className="text-base sm:text-lg md:text-xl mb-6 md:mb-10 max-w-2xl mx-auto text-primary/90 leading-relaxed">
               اشترك في نشرتنا الإخبارية للحصول على آخر الأخبار والتحليلات مباشرة في بريدك الإلكتروني
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-lg mx-auto">
               <input
                 type="email"
                 placeholder="بريدك الإلكتروني"
-                className="flex-1 px-6 py-4 rounded-xl text-foreground border-2 border-transparent focus:border-primary focus:outline-none shadow-md text-lg"
+                className="flex-1 px-4 md:px-6 py-3 md:py-4 rounded-xl text-foreground border-2 border-transparent focus:border-primary focus:outline-none shadow-md text-base md:text-lg"
               />
-              <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all">
+              <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 md:px-10 py-3 md:py-4 text-base md:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all whitespace-nowrap">
                 اشترك الآن
               </button>
             </div>
@@ -265,22 +265,22 @@ export default async function Home() {
         </section>
 
         {/* Quick Links Section */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          <Link href="/politics" className="block p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
-            <h3 className="text-xl font-bold mb-2 group-hover:text-gold transition-colors">الأخبار السياسية</h3>
-            <p className="text-sm text-muted-foreground">آخر التطورات السياسية</p>
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-10 md:mb-16">
+          <Link href="/politics" className="block p-4 md:p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
+            <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2 group-hover:text-gold transition-colors">الأخبار السياسية</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">آخر التطورات السياسية</p>
           </Link>
-          <Link href="/economy" className="block p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
-            <h3 className="text-xl font-bold mb-2 group-hover:text-gold transition-colors">الأخبار الاقتصادية</h3>
-            <p className="text-sm text-muted-foreground">تقارير اقتصادية شاملة</p>
+          <Link href="/economy" className="block p-4 md:p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
+            <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2 group-hover:text-gold transition-colors">الأخبار الاقتصادية</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">تقارير اقتصادية شاملة</p>
           </Link>
-          <Link href="/local" className="block p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
-            <h3 className="text-xl font-bold mb-2 group-hover:text-gold transition-colors">الأخبار المحلية</h3>
-            <p className="text-sm text-muted-foreground">أخبار من داخل المملكة</p>
+          <Link href="/local" className="block p-4 md:p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
+            <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2 group-hover:text-gold transition-colors">الأخبار المحلية</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">أخبار من داخل المملكة</p>
           </Link>
-          <Link href="/sports" className="block p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
-            <h3 className="text-xl font-bold mb-2 group-hover:text-gold transition-colors">الأخبار الرياضية</h3>
-            <p className="text-sm text-muted-foreground">كل ما يخص الرياضة</p>
+          <Link href="/sports" className="block p-4 md:p-6 bg-card rounded-xl border border-border/50 hover:border-gold/50 hover:shadow-lg transition-all group">
+            <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2 group-hover:text-gold transition-colors">الأخبار الرياضية</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">كل ما يخص الرياضة</p>
           </Link>
         </section>
       </main>

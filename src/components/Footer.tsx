@@ -8,16 +8,16 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-primary-foreground border-t border-gold/20 mt-20">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="bg-primary text-primary-foreground border-t border-gold/20 mt-12 md:mt-20">
+      <div className="container mx-auto px-4 py-10 md:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {/* Logo and Description */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-4 mb-6">
-              <Image src="/nafud-logo.png" alt="نفود" width={80} height={80} className="h-20 w-20" />
+          <div className="col-span-1 sm:col-span-2 md:col-span-2">
+            <div className="flex items-center gap-4 mb-5">
+              <Image src="/icon.png" alt="نفود" width={64} height={64} className="h-14 w-14 md:h-20 md:w-20" />
               <div className="flex flex-col">
-                <span className="text-gold font-bold text-3xl tracking-tight">شبكة نفود</span>
-                <span className="text-gold/80 text-base font-light">الإخبارية</span>
+                <span className="text-gold font-bold text-2xl md:text-3xl tracking-tight">شبكة نفود</span>
+                <span className="text-gold/80 text-sm md:text-base font-light">الإخبارية</span>
               </div>
             </div>
             <p className="text-primary-foreground/70 mb-6 leading-relaxed text-base max-w-md">
@@ -90,7 +90,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gold/20 mt-12 pt-8 text-center">
+        <div className="border-t border-gold/20 mt-8 md:mt-12 pt-6 md:pt-8 text-center">
           <p className="text-primary-foreground/60 text-sm">
             © {currentYear} {SITE_NAME}. جميع الحقوق محفوظة.
           </p>

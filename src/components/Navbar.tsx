@@ -36,7 +36,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 md:gap-3 hover:opacity-90 transition-all group">
             <Image 
-              src="/nafud-logo.png" 
+              src="/icon.png" 
               alt="نفود" 
               width={48} 
               height={48}

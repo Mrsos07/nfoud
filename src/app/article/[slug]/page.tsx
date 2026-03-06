@@ -109,7 +109,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     "@type": "NewsArticle",
     "headline": article.title,
     "description": article.meta_description || article.excerpt || article.title,
-    "image": article.image_url ? [article.image_url] : [`${SITE_URL}/nafud-logo.png`],
+    "image": article.image_url ? [article.image_url] : [`${SITE_URL}/icon.png`],
     "datePublished": article.created_at,
     "dateModified": article.updated_at || article.created_at,
     "author": article.editors ? {
@@ -124,7 +124,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       "@type": "NewsMediaOrganization",
       "name": SITE_NAME,
       "url": SITE_URL,
-      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/nafud-logo.png` },
+      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/icon.png` },
     },
     "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
     "articleSection": getCategoryLabel(article.category),
@@ -153,16 +153,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </div>
         </header>
 
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="max-w-4xl mx-auto">
             {/* Title */}
             <header>
-              <h1 className="text-4xl md:text-5xl font-bold mb-8 leading-tight tracking-wide">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5 md:mb-8 leading-tight tracking-wide">
                 {article.title}
               </h1>
 
               {/* Meta & Share */}
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b-2 border-gold">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-5 md:mb-8 pb-4 md:pb-6 border-b-2 border-gold">
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   {article.editors && (
                     <span className="font-semibold text-foreground">✍️ {article.editors.name}</span>
@@ -193,8 +193,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             {/* Excerpt */}
             {article.excerpt && (
-              <aside className="mb-8 p-8 bg-secondary border-r-4 border-gold rounded-lg" role="complementary">
-                <p className="text-2xl font-semibold leading-loose tracking-wide">{article.excerpt}</p>
+              <aside className="mb-6 md:mb-8 p-5 md:p-8 bg-secondary border-r-4 border-gold rounded-lg" role="complementary">
+                <p className="text-lg md:text-2xl font-semibold leading-loose tracking-wide">{article.excerpt}</p>
               </aside>
             )}
 

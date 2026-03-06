@@ -39,19 +39,19 @@ export default async function PoliticsPage() {
       <Navbar />
       <NewsTickerWrapper />
       
-      <header className="bg-primary text-primary-foreground py-16 border-b-2 border-gold">
+      <header className="bg-primary text-primary-foreground py-10 md:py-16 border-b-2 border-gold">
         <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4 mb-4">
-            <Globe className="text-gold" size={48} aria-hidden="true" />
-            <h1 className="text-4xl md:text-5xl font-bold">أخبار السياسة</h1>
+          <div className="flex items-center gap-3 mb-3">
+            <Globe className="text-gold" size={36} aria-hidden="true" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">أخبار السياسة</h1>
           </div>
-          <p className="text-xl text-gold">آخر الأخبار السياسية من المملكة والعالم</p>
+          <p className="text-base md:text-xl text-gold">آخر الأخبار السياسية من المملكة والعالم</p>
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-12">
+      <main className="flex-1 container mx-auto px-4 py-8 md:py-12">
         <section aria-label="قائمة الأخبار السياسية">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {news.length === 0 ? (
               <div className="col-span-3 text-center py-20">
                 <p className="text-xl text-muted-foreground">لا توجد أخبار سياسية متاحة حالياً</p>
