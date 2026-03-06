@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import NewsImage from '@/components/NewsImage';
 import { supabase } from '@/lib/supabase';
 import { News } from '@/types/news';
-import { getCategoryLabel, formatTimeAgo } from '@/lib/utils';
+import { getCategoryLabel, formatTimeAgo, safeKeywords } from '@/lib/utils';
 import { SITE_URL, SITE_NAME } from '@/lib/constants';
 import Navbar from '@/components/Navbar';
 import NewsTickerWrapper from '@/components/NewsTickerWrapper';
@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: article.title,
     description: article.meta_description || article.excerpt || article.title,
-    keywords: article.keywords?.join(', '),
+    keywords: safeKeywords(article.keywords).join(', ') || undefined,
     openGraph: {
       type: 'article',
       url: articleUrl,
@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       publishedTime: article.created_at,
       modifiedTime: article.updated_at || article.created_at,
       section: getCategoryLabel(article.category),
-      tags: article.keywords || [],
+      tags: safeKeywords(article.keywords),
     },
     twitter: {
       card: 'summary_large_image',
@@ -155,7 +155,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     },
     "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
     "articleSection": getCategoryLabel(article.category),
-    "keywords": article.keywords?.join(', '),
+    "keywords": safeKeywords(article.keywords).join(', ') || undefined,
     "inLanguage": "ar",
     "isAccessibleForFree": true,
   };
@@ -204,15 +204,27 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </header>
 
             {/* Article Image */}
-            <figure className="mb-8 rounded-lg overflow-hidden max-h-[450px]" style={{ aspectRatio: '16/9' }}>
+            <figure className="mb-6 md:mb-8 rounded-lg overflow-hidden relative w-full h-[250px] sm:h-[300px] md:h-[400px]">
               <NewsImage
                 src={article.image_url}
                 alt={article.title}
                 className="w-full h-full object-cover"
+                sizes="(max-width: 768px) 100vw, 896px"
                 priority
                 category={getCategoryLabel(article.category)}
               />
             </figure>
+
+            {/* Author & Date */}
+            <div className="flex flex-wrap items-center gap-4 mb-6 text-sm text-muted-foreground">
+              {article.editors?.name && (
+                <span className="font-semibold text-foreground">✍️ {article.editors.name}</span>
+              )}
+              <div className="flex items-center gap-2">
+                <Calendar size={16} className="text-gold" />
+                <time dateTime={article.created_at}>{formatTimeAgo(article.created_at)}</time>
+              </div>
+            </div>
 
             {/* Excerpt */}
             {article.excerpt && (
@@ -222,7 +234,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             )}
 
             {/* Key Points */}
-            {article.key_points && article.key_points.length > 0 && (
+            {Array.isArray(article.key_points) && article.key_points.length > 0 && (
               <aside className="mb-8 border-t-4 border-gold bg-secondary/50 rounded-lg p-6" role="complementary" aria-label="النقاط الرئيسية">
                 <h2 className="text-xl font-bold mb-4 text-foreground">النقاط الرئيسية</h2>
                 <ul className="space-y-3 list-disc list-inside pr-2">
