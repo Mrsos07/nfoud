@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { News, LiveEvent } from '@/types/news';
 import NewsCard from '@/components/NewsCard';
 import LiveEventCard from '@/components/LiveEventCard';
@@ -13,7 +13,7 @@ export const revalidate = 60;
 
 async function getFeaturedNews(): Promise<News[]> {
   try {
-    const { data: linkedNews } = await supabase
+    const { data: linkedNews } = await supabaseServer
       .from('live_event_updates')
       .select('source_news_id, live_events!inner(status)')
       .not('source_news_id', 'is', null)
@@ -21,7 +21,7 @@ async function getFeaturedNews(): Promise<News[]> {
 
     const linkedNewsIds = linkedNews?.map((item: any) => item.source_news_id).filter(Boolean) || [];
 
-    const query = supabase
+    const query = supabaseServer
       .from('news')
       .select('*, editors(name, position)')
       .order('created_at', { ascending: false })
@@ -47,7 +47,7 @@ async function getFeaturedNews(): Promise<News[]> {
 
 async function getLiveEvents(): Promise<LiveEvent[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('live_events')
       .select('*, live_event_updates(count)')
       .eq('status', 'active')

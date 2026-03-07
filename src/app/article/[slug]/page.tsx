@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import NewsImage from '@/components/NewsImage';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { News } from '@/types/news';
 import { getCategoryLabel, formatTimeAgo, safeKeywords } from '@/lib/utils';
 import { SITE_URL, SITE_NAME } from '@/lib/constants';
@@ -25,7 +25,7 @@ function getCategoryPath(category: string): string {
 async function getArticle(slug: string): Promise<News | null> {
   try {
     // Try by slug first
-    const { data: bySlug, error: slugError } = await supabase
+    const { data: bySlug, error: slugError } = await supabaseServer
       .from('news')
       .select('*, editors(name, position, bio)')
       .eq('slug', decodeURIComponent(slug))
@@ -38,7 +38,7 @@ async function getArticle(slug: string): Promise<News | null> {
     if (bySlug) return bySlug;
 
     // Fallback: try by ID
-    const { data: byId, error: idError } = await supabase
+    const { data: byId, error: idError } = await supabaseServer
       .from('news')
       .select('*, editors(name, position, bio)')
       .eq('id', slug)
@@ -57,7 +57,7 @@ async function getArticle(slug: string): Promise<News | null> {
 
 async function getRelatedNews(category: string, excludeId: string): Promise<News[]> {
   try {
-    const { data } = await supabase
+    const { data } = await supabaseServer
       .from('news')
       .select('*, editors(name)')
       .eq('category', category)

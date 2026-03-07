@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { LiveEvent } from '@/types/news';
 import LiveEventCard from '@/components/LiveEventCard';
 import NewsTickerWrapper from '@/components/NewsTickerWrapper';
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 async function getLiveEvents(): Promise<LiveEvent[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseServer
     .from('live_events')
     .select('*, live_event_updates(count)')
     .in('status', ['active', 'ended'])

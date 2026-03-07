@@ -1,8 +1,8 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 
 export async function GET() {
-  const { data: articles } = await supabase
+  const { data: articles } = await supabaseServer
     .from('news')
     .select('id, slug, title, excerpt, created_at, category, image_url')
     .order('created_at', { ascending: false })

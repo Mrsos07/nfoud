@@ -1,15 +1,15 @@
 import { MetadataRoute } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { SITE_URL } from '@/lib/constants';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [{ data: articles }, { data: liveEvents }] = await Promise.all([
-    supabase
+    supabaseServer
       .from('news')
       .select('id, slug, updated_at, created_at')
       .order('created_at', { ascending: false })
       .limit(1000),
-    supabase
+    supabaseServer
       .from('live_events')
       .select('id, updated_at, created_at')
       .order('created_at', { ascending: false })

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { News } from '@/types/news';
 import NewsCard from '@/components/NewsCard';
 import NewsTickerWrapper from '@/components/NewsTickerWrapper';
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 async function getPoliticsNews(): Promise<News[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseServer
     .from('news')
     .select('*, editors(name, position)')
     .eq('category', 'politics')

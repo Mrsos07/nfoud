@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { LiveEvent } from '@/types/news';
 import { formatDate, getCategoryLabel } from '@/lib/utils';
 import { SITE_URL, SITE_NAME } from '@/lib/constants';
@@ -20,7 +20,7 @@ interface LiveEventUpdate {
 }
 
 async function getLiveEvent(id: string): Promise<LiveEvent | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseServer
     .from('live_events')
     .select('*')
     .eq('id', id)
@@ -34,7 +34,7 @@ async function getLiveEvent(id: string): Promise<LiveEvent | null> {
 }
 
 async function getLiveEventUpdates(eventId: string): Promise<LiveEventUpdate[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseServer
     .from('live_event_updates')
     .select('*')
     .eq('live_event_id', eventId)
