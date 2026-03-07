@@ -41,19 +41,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // --- Layer 1: Word count validation (minimum 400 words) ---
-    const { valid, wordCount } = validateWordCount(body.content);
-    if (!valid) {
-      return NextResponse.json(
-        {
-          error: 'المقال قصير جداً',
-          message: `المقال يحتوي على ${wordCount} كلمة فقط. الحد الأدنى المطلوب هو 400 كلمة.`,
-          wordCount,
-          minRequired: 400,
-        },
-        { status: 422 }
-      );
-    }
+    // --- Layer 1: Word count (no minimum enforced) ---
+    const { wordCount } = validateWordCount(body.content);
 
     // --- Layer 2: AI SEO optimization ---
     const skipAI = body.skip_ai === true;
