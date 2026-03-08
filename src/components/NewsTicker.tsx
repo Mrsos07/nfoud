@@ -146,8 +146,8 @@ export default function NewsTicker({
           unicode-bidi: plaintext;
         }
         @keyframes scroll-rtl {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
         }
         @media (prefers-reduced-motion: reduce) {
           .ticker-scroll {

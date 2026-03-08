@@ -3,11 +3,22 @@ import { createClient } from '@supabase/supabase-js';
 import { validateWordCount, optimizeSEO } from '@/lib/ai-seo';
 
 const WEBHOOK_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || '2080db46-34ae-40f6-bd22-1b88ca0bffa8';
-const DEFAULT_EDITOR_ID = 'b94709ed-7bd7-4c43-8b98-8805e60f7371';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+async function getRandomEditorId(): Promise<string> {
+  const { data } = await supabaseAdmin
+    .from('editors')
+    .select('id');
+
+  if (data && data.length > 0) {
+    const randomIndex = Math.floor(Math.random() * data.length);
+    return data[randomIndex].id;
+  }
+  return crypto.randomUUID();
+}
 
 function generateSlug(title: string): string {
   return title
@@ -87,7 +98,7 @@ export async function POST(request: NextRequest) {
       canonical_url: body.canonical_url || null,
       key_points: seoData.key_points,
       created_at: new Date().toISOString(),
-      editor_id: body.editor_id || DEFAULT_EDITOR_ID,
+      editor_id: body.editor_id || await getRandomEditorId(),
       location: body.location || null,
     };
 
