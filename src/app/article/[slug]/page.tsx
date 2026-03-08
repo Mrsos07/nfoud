@@ -9,7 +9,9 @@ import Navbar from '@/components/Navbar';
 import NewsTickerWrapper from '@/components/NewsTickerWrapper';
 import Footer from '@/components/Footer';
 import ShareButtons from '@/components/ShareButtons';
-import { Calendar } from 'lucide-react';
+import { Calendar, Tag } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import Link from 'next/link';
 import sanitizeHtml from 'sanitize-html';
 
 export const dynamic = 'force-dynamic';
@@ -81,26 +83,31 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const articleUrl = `${SITE_URL}/article/${article.slug || article.id}`;
 
+  const seoTitle = `${article.title} | ${getCategoryLabel(article.category)}`;
+  const seoDescription = article.meta_description || article.excerpt || article.title;
+
   return {
-    title: article.title,
-    description: article.meta_description || article.excerpt || article.title,
+    title: seoTitle,
+    description: seoDescription,
     keywords: safeKeywords(article.keywords).join(', ') || undefined,
+    alternates: {
+      canonical: articleUrl,
+    },
     openGraph: {
       type: 'article',
       url: articleUrl,
-      title: article.title,
-      description: article.meta_description || article.excerpt || article.title,
-      images: article.image_url ? [{ url: article.image_url }] : [],
+      title: seoTitle,
+      description: seoDescription,
       publishedTime: article.created_at,
       modifiedTime: article.updated_at || article.created_at,
       section: getCategoryLabel(article.category),
       tags: safeKeywords(article.keywords),
+      authors: article.editors?.name ? [article.editors.name] : [SITE_NAME],
     },
     twitter: {
       card: 'summary_large_image',
-      title: article.title,
-      description: article.meta_description || article.excerpt || article.title,
-      images: article.image_url ? [article.image_url] : [],
+      title: seoTitle,
+      description: seoDescription,
     },
   };
 }
@@ -131,17 +138,30 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     sanitizedContent = article.content || '';
   }
 
+  const plainText = (article.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     "headline": article.title,
+    "name": article.title,
     "description": article.meta_description || article.excerpt || article.title,
-    "image": article.image_url ? [article.image_url] : [`${SITE_URL}/icon.png`],
+    "image": article.image_url ? {
+      "@type": "ImageObject",
+      "url": article.image_url,
+      "width": 1200,
+      "height": 630,
+    } : { "@type": "ImageObject", "url": `${SITE_URL}/icon.png` },
+    "thumbnailUrl": article.image_url || `${SITE_URL}/icon.png`,
     "datePublished": article.created_at,
     "dateModified": article.updated_at || article.created_at,
     "author": article.editors ? {
       "@type": "Person",
       "name": article.editors.name,
+      "jobTitle": article.editors.position || 'محرر',
+      "description": article.editors.bio || undefined,
+      "url": `${SITE_URL}`,
     } : {
       "@type": "Organization",
       "name": SITE_NAME,
@@ -151,13 +171,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       "@type": "NewsMediaOrganization",
       "name": SITE_NAME,
       "url": SITE_URL,
-      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/icon.png` },
+      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/icon.png`, "width": 512, "height": 512 },
     },
     "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "url": articleUrl,
     "articleSection": getCategoryLabel(article.category),
     "keywords": safeKeywords(article.keywords).join(', ') || undefined,
+    "wordCount": wordCount,
     "inLanguage": "ar",
     "isAccessibleForFree": true,
+    "copyrightHolder": { "@type": "Organization", "name": SITE_NAME },
+    "copyrightYear": new Date(article.created_at || Date.now()).getFullYear(),
   };
 
   return (
@@ -171,6 +195,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <NewsTickerWrapper />
 
       <article className="flex-1">
+        {/* Breadcrumbs */}
+        <div className="bg-secondary/50 border-b border-border">
+          <Breadcrumbs items={[
+            { label: getCategoryLabel(article.category), href: getCategoryPath(article.category) },
+            { label: article.title, href: `/article/${article.slug || article.id}` },
+          ]} />
+        </div>
+
         {/* Category Header Bar */}
         <header className="bg-secondary border-b-2 border-gold py-4">
           <div className="container mx-auto px-4">
@@ -266,6 +298,26 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 </div>
               </aside>
             )}
+
+            {/* Keywords / Internal Links */}
+            {safeKeywords(article.keywords).length > 0 && (
+              <div className="mt-8 flex flex-wrap items-center gap-2">
+                <Tag size={16} className="text-gold" />
+                {safeKeywords(article.keywords).map((keyword) => (
+                  <span key={keyword} className="inline-block bg-secondary text-sm text-muted-foreground px-3 py-1 rounded-full border border-border">
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Category CTA */}
+            <div className="mt-8 p-5 bg-secondary/50 border border-border rounded-lg flex items-center justify-between">
+              <span className="text-foreground font-medium">تصفح المزيد من أخبار {getCategoryLabel(article.category)}</span>
+              <Link href={getCategoryPath(article.category)} className="text-gold font-bold hover:underline">
+                عرض الكل
+              </Link>
+            </div>
 
             {/* Related Articles */}
             {relatedNews.length > 0 && (

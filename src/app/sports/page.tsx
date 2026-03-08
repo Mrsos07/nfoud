@@ -6,6 +6,7 @@ import NewsTickerWrapper from '@/components/NewsTickerWrapper';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Trophy } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const revalidate = 60;
 
@@ -38,6 +39,10 @@ export default async function SportsPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <NewsTickerWrapper />
+
+      <div className="bg-secondary/50 border-b border-border">
+        <Breadcrumbs items={[{ label: 'رياضة', href: '/sports' }]} />
+      </div>
       
       <header className="bg-primary text-primary-foreground py-10 md:py-16 border-b-2 border-gold">
         <div className="container mx-auto px-4">

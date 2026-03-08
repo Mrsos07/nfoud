@@ -56,12 +56,6 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: `${SITE_NAME} - أول شبكة أخبار سعودية بالذكاء الاصطناعي`,
     description: SITE_DESCRIPTION,
-    images: [{
-      url: `${SITE_URL}/favicon.png`,
-      width: 512,
-      height: 512,
-      alt: SITE_NAME,
-    }],
   },
   twitter: {
     card: "summary_large_image",
@@ -69,7 +63,6 @@ export const metadata: Metadata = {
     creator: "@Nfoud_ai",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/favicon.png`],
   },
   robots: {
     index: true,
