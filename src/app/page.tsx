@@ -9,7 +9,7 @@ import { TrendingUp, Newspaper, Globe, Trophy, ChevronLeft, Radio } from 'lucide
 import Link from 'next/link';
 import Image from 'next/image';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 async function getFeaturedNews(): Promise<News[]> {
   try {

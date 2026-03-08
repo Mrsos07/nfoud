@@ -9,7 +9,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Radio, Clock } from 'lucide-react';
 
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 interface LiveEventUpdate {
   id: string;

@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Radio } from 'lucide-react';
 
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'الأحداث الحية',

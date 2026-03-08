@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import { Newspaper } from 'lucide-react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'جميع الأخبار – آخر الأخبار من جميع الأقسام',
