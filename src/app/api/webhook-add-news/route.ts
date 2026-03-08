@@ -20,15 +20,33 @@ async function getRandomEditorId(): Promise<string> {
   return crypto.randomUUID();
 }
 
+const AR_TO_EN: Record<string, string> = {
+  'ا': 'a', 'أ': 'a', 'إ': 'e', 'آ': 'aa', 'ب': 'b', 'ت': 't', 'ث': 'th',
+  'ج': 'j', 'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'th', 'ر': 'r', 'ز': 'z',
+  'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a',
+  'غ': 'gh', 'ف': 'f', 'ق': 'q', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n',
+  'ه': 'h', 'و': 'w', 'ي': 'y', 'ى': 'a', 'ة': 'h', 'ء': 'a', 'ئ': 'e',
+  'ؤ': 'w', 'لا': 'la',
+};
+
 function generateSlug(title: string): string {
-  return title
+  const transliterated = title
     .trim()
-    .toLowerCase()
-    .replace(/[^\u0621-\u064Aa-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
+    .split('')
+    .map(ch => {
+      if (/[a-zA-Z0-9]/.test(ch)) return ch.toLowerCase();
+      if (ch === ' ' || ch === '-') return '-';
+      return AR_TO_EN[ch] || '';
+    })
+    .join('');
+
+  const cleaned = transliterated
     .replace(/-+/g, '-')
-    .substring(0, 120)
-    + '-' + Date.now().toString(36);
+    .replace(/^-|-$/g, '')
+    .substring(0, 80);
+
+  const id = Date.now().toString(36).slice(-5);
+  return `${cleaned}-${id}`;
 }
 
 export async function POST(request: NextRequest) {
