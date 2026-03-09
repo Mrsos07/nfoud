@@ -85,6 +85,8 @@ export async function POST(request: NextRequest) {
 
     let aiOptimized = false;
 
+    let formattedContent = body.content;
+
     if (!skipAI && process.env.OPENAI_API_KEY) {
       try {
         const aiResult = await optimizeSEO(body.title, body.content, body.category || 'local');
@@ -96,6 +98,12 @@ export async function POST(request: NextRequest) {
           keywords: aiResult.keywords.length > 0 ? aiResult.keywords : body.keywords || null,
           key_points: aiResult.key_points.length > 0 ? aiResult.key_points : body.key_points || null,
         };
+        
+        // Use formatted content if available
+        if (aiResult.formatted_content) {
+          formattedContent = aiResult.formatted_content;
+        }
+        
         aiOptimized = true;
       } catch (aiError) {
         console.error('AI SEO optimization failed, proceeding without it:', aiError);
@@ -106,7 +114,7 @@ export async function POST(request: NextRequest) {
     const newsData = {
       id: body.id || crypto.randomUUID(),
       title: seoData.title,
-      content: body.content,
+      content: formattedContent,
       slug: body.slug || generateSlug(seoData.title),
       excerpt: seoData.excerpt,
       image_url: body.image_url || null,

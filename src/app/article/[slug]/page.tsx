@@ -9,13 +9,23 @@ import Navbar from '@/components/Navbar';
 import NewsTickerWrapper from '@/components/NewsTickerWrapper';
 import Footer from '@/components/Footer';
 import ShareButtons from '@/components/ShareButtons';
-import { Calendar, Tag } from 'lucide-react';
+import { Calendar, Tag, User, FileText, MapPin, Clock, HelpCircle, Settings } from 'lucide-react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Link from 'next/link';
 import sanitizeHtml from 'sanitize-html';
 
 export const dynamic = 'force-dynamic';
 
+function getKeyPointIcon(point: string) {
+  const lowerPoint = point.toLowerCase();
+  if (lowerPoint.startsWith('من')) return User;
+  if (lowerPoint.startsWith('ماذا') || lowerPoint.startsWith('ما ')) return FileText;
+  if (lowerPoint.startsWith('أين')) return MapPin;
+  if (lowerPoint.startsWith('متى')) return Clock;
+  if (lowerPoint.startsWith('لماذا')) return HelpCircle;
+  if (lowerPoint.startsWith('كيف')) return Settings;
+  return FileText;
+}
 
 function getCategoryPath(category: string): string {
   const paths: Record<string, string> = {
@@ -265,21 +275,32 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </aside>
             )}
 
-            {/* Key Points */}
+            {/* Key Points - 5W+1H */}
             {Array.isArray(article.key_points) && article.key_points.length > 0 && (
-              <aside className="mb-8 border-t-4 border-gold bg-secondary/50 rounded-lg p-6" role="complementary" aria-label="النقاط الرئيسية">
-                <h2 className="text-xl font-bold mb-4 text-foreground">النقاط الرئيسية</h2>
-                <ul className="space-y-3 list-disc list-inside pr-2">
-                  {article.key_points.map((point: string, index: number) => (
-                    <li key={index} className="text-lg leading-relaxed text-foreground">{point}</li>
-                  ))}
-                </ul>
+              <aside className="mb-8 border-t-4 border-gold bg-gradient-to-br from-secondary/80 to-secondary/50 rounded-lg p-6 md:p-8 shadow-elegant" role="complementary" aria-label="النقاط الرئيسية">
+                <h2 className="text-2xl font-bold mb-6 text-foreground flex items-center gap-3">
+                  <span className="w-1 h-8 bg-gold rounded-full"></span>
+                  النقاط الرئيسية
+                </h2>
+                <div className="grid gap-4">
+                  {article.key_points.map((point: string, index: number) => {
+                    const Icon = getKeyPointIcon(point);
+                    return (
+                      <div key={index} className="flex items-start gap-4 p-4 bg-background/60 rounded-lg border border-border/50 hover:border-gold/50 transition-colors">
+                        <div className="shrink-0 w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
+                          <Icon className="w-5 h-5 text-gold" />
+                        </div>
+                        <p className="text-lg leading-relaxed text-foreground flex-1 pt-1">{point}</p>
+                      </div>
+                    );
+                  })}
+                </div>
               </aside>
             )}
 
             {/* Article Content */}
             <section
-              className="prose prose-2xl max-w-none"
+              className="prose prose-2xl max-w-none article-content-columns"
               dangerouslySetInnerHTML={{ __html: sanitizedContent }}
             />
 

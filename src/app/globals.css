@@ -282,3 +282,46 @@ html {
 @utility prose-2xl {
   font-size: 1.5rem;
 }
+
+.article-content-columns {
+  column-count: 1;
+  column-gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .article-content-columns {
+    column-count: 2;
+    column-gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .article-content-columns {
+    column-count: 3;
+    column-gap: 3rem;
+  }
+}
+
+.article-content-columns h1,
+.article-content-columns h2,
+.article-content-columns h3,
+.article-content-columns h4,
+.article-content-columns h5,
+.article-content-columns h6 {
+  column-span: all;
+  break-after: column;
+}
+
+.article-content-columns img {
+  column-span: all;
+  break-inside: avoid;
+}
+
+.article-content-columns blockquote {
+  break-inside: avoid;
+}
+
+.article-content-columns p {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
