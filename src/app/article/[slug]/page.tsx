@@ -277,30 +277,30 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             {/* Key Points - 5W+1H */}
             {Array.isArray(article.key_points) && article.key_points.length > 0 && (
-              <aside className="mb-8 border-t-4 border-gold bg-gradient-to-br from-secondary/80 to-secondary/50 rounded-lg p-6 md:p-8 shadow-elegant" role="complementary" aria-label="النقاط الرئيسية">
-                <h2 className="text-2xl font-bold mb-6 text-foreground flex items-center gap-3">
+              <aside className="mb-8 rounded-lg p-5 md:p-6 bg-secondary/40" role="complementary" aria-label="النقاط الرئيسية">
+                <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-3">
                   <span className="w-1 h-8 bg-gold rounded-full"></span>
                   النقاط الرئيسية
                 </h2>
-                <div className="grid gap-4">
+                <ul className="space-y-3">
                   {article.key_points.map((point: string, index: number) => {
                     const Icon = getKeyPointIcon(point);
                     return (
-                      <div key={index} className="flex items-start gap-4 p-4 bg-background/60 rounded-lg border border-border/50 hover:border-gold/50 transition-colors">
-                        <div className="shrink-0 w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-gold" />
-                        </div>
-                        <p className="text-lg leading-relaxed text-foreground flex-1 pt-1">{point}</p>
-                      </div>
+                      <li key={index} className="flex items-start gap-3 text-lg leading-relaxed text-foreground">
+                        <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/10" aria-hidden="true">
+                          <Icon className="h-4 w-4 text-gold" />
+                        </span>
+                        <span>{point}</span>
+                      </li>
                     );
                   })}
-                </div>
+                </ul>
               </aside>
             )}
 
             {/* Article Content */}
             <section
-              className="prose prose-2xl max-w-none article-content-columns"
+              className="prose prose-2xl max-w-none"
               dangerouslySetInnerHTML={{ __html: sanitizedContent }}
             />
 

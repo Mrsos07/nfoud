@@ -2,13 +2,37 @@ import { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { SITE_NAME } from '@/lib/constants';
+import { supabaseServer } from '@/lib/supabase';
 
 export const metadata: Metadata = {
   title: 'من نحن',
   description: 'تعرف على شبكة نفود الإخبارية - أول شبكة أخبار سعودية مدعومة بالذكاء الاصطناعي',
 };
 
-export default function AboutPage() {
+interface Editor {
+  id: string;
+  name: string;
+  position: string | null;
+  bio: string | null;
+}
+
+async function getEditors(): Promise<Editor[]> {
+  const { data, error } = await supabaseServer
+    .from('editors')
+    .select('id, name, position, bio')
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching editors:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export default async function AboutPage() {
+  const editors = await getEditors();
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -66,6 +90,43 @@ export default function AboutPage() {
             <p className="text-muted-foreground">
               للاستفسارات والتواصل: <a href="mailto:info@nfoud.com" className="text-gold hover:text-gold/80 font-medium transition-colors">info@nfoud.com</a>
             </p>
+
+            {editors.length > 0 && (
+              <section className="pt-4" aria-label="الكتّاب">
+                <div className="mb-6 md:mb-8 rounded-2xl border border-gold/20 bg-gradient-to-br from-primary to-primary/90 p-6 md:p-8 text-primary-foreground shadow-elegant">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="h-8 w-1 rounded-full bg-gold"></span>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gold">كتّاب نفود</h2>
+                  </div>
+                  <p className="text-sm md:text-base leading-relaxed text-primary-foreground/85 max-w-3xl">
+                    نخبة من الكتّاب والمحررين يقدّمون محتوى خبرياً وتحليلياً باحترافية، مع التزام بالدقة والوضوح ومواكبة الأحداث محلياً وإقليمياً ودولياً.
+                  </p>
+                </div>
+                <div className="space-y-5 md:space-y-6">
+                  {editors.map((editor) => (
+                    <article key={editor.id} className="group relative overflow-hidden rounded-2xl border border-gold/15 bg-gradient-to-br from-card to-secondary/70 p-6 md:p-8 shadow-elegant transition-all duration-300 hover:border-gold/40 hover:shadow-xl">
+                      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-l from-gold/30 via-gold to-gold/30"></div>
+                      <div className="flex items-start gap-4 md:gap-6">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-accent text-accent-foreground text-2xl font-bold shadow-md ring-4 ring-gold/10">
+                          {editor.name?.charAt(0) || '✍'}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                            <h3 className="font-bold text-xl md:text-2xl text-foreground">{editor.name}</h3>
+                            <span className="inline-flex items-center rounded-full border border-gold/25 bg-gold/10 px-3 py-1 text-xs md:text-sm font-medium text-gold">
+                              {editor.position || 'محرر'}
+                            </span>
+                          </div>
+                          <p className="text-muted-foreground text-sm md:text-base leading-loose max-w-3xl">
+                            {editor.bio || 'كاتب ومحرر في شبكة نفود الإخبارية.'}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </div>
       </main>
