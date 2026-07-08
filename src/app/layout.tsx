@@ -21,6 +21,8 @@ export const viewport: Viewport = {
   themeColor: "#1a2332",
 };
 
+const DEFAULT_OG_IMAGE = `${SITE_URL}/favicon.png`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -58,6 +60,14 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: `${SITE_NAME} - أول شبكة أخبار سعودية بالذكاء الاصطناعي`,
     description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -65,6 +75,7 @@ export const metadata: Metadata = {
     creator: "@Nfoud_ai",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
   },
   robots: {
     index: true,

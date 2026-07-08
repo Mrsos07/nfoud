@@ -1,0 +1,4 @@
+- [x] تحديث metadata في src/app/layout.tsx لإضافة openGraph.images و twitter.images بصورة مطلقة ثابتة.
+- [x] مراجعة توافق إعدادات Twitter/OpenGraph مع المتطلبات.
+- [ ] تشغيل فحص المشروع للتأكد من سلامة التعديلات.
+- [ ] تجهيز تغييرات Git (branch/commit/push) لرفع التحديثات على GitHub.
