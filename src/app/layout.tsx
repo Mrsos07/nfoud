@@ -26,7 +26,7 @@ const DEFAULT_OG_IMAGE = `${SITE_URL}/favicon.png`;
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} - أول شبكة أخبار سعودية بالذكاء الاصطناعي`,
+    default: `${SITE_NAME} - نفود أول شبكة أخبار سعودية بالذكاء الاصطناعي`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -49,16 +49,23 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.png', type: 'image/png', sizes: 'any' },
+      // Google & browsers: ico يظل الأفضل للـ SERP fallback
+      { url: '/favicon.ico', type: 'image/x-icon', sizes: 'any' },
+      // PNG fallback بحجم مناسب
+      { url: '/favicon.png', type: 'image/png', sizes: '192x192' },
+      // احتياطي: بعض المتصفحات/الأدوات تتوقع 32x32/16x16
+      { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon.png', type: 'image/png', sizes: '16x16' },
     ],
     apple: { url: '/favicon.png', sizes: '512x512' },
   },
+  manifest: '/manifest.webmanifest',
   openGraph: {
     type: "website",
     locale: "ar_SA",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} - أول شبكة أخبار سعودية بالذكاء الاصطناعي`,
+    title: `${SITE_NAME} - نفود أول شبكة أخبار سعودية بالذكاء الاصطناعي`,
     description: SITE_DESCRIPTION,
     images: [
       {
@@ -103,7 +110,16 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://wqcikbeglxfptnaamnpj.supabase.co" />
         <link rel="dns-prefetch" href="https://wqcikbeglxfptnaamnpj.supabase.co" />
+
+        {/* فافيكون صريح (حل جذري لتأكد Google من اكتشاف الأيقونة) */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+
         <meta name="msapplication-TileImage" content="/favicon.png" />
+        <meta name="theme-color" content="#1a2332" />
       </head>
       <body className={`${cairo.variable} font-sans antialiased`} suppressHydrationWarning>
         <CategoryLabelsInit categories={categories.map((c) => ({ slug: c.slug, name: c.name }))} />
