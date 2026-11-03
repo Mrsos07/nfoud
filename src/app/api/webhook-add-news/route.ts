@@ -3,8 +3,6 @@ import { createClient } from '@supabase/supabase-js';
 import { validateWordCount, optimizeSEO } from '@/lib/ai-seo';
 import { syncLiveEventFromNews } from '@/lib/live-events';
 
-const WEBHOOK_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || '';
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
@@ -90,8 +88,11 @@ function generateSlug(title: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const WEBHOOK_TOKEN = (process.env.WEBHOOK_SECRET_TOKEN || '').trim();
     if (!WEBHOOK_TOKEN) {
-      console.error('WEBHOOK_SECRET_TOKEN is not configured');
+      // Log only env var NAMES (never values) to help spot typos in the hosting dashboard.
+      const similarKeys = Object.keys(process.env).filter((key) => /webhook|secret|token/i.test(key));
+      console.error('WEBHOOK_SECRET_TOKEN is not configured. Similar env var names found:', similarKeys);
       return NextResponse.json({ error: 'Webhook is not configured' }, { status: 503 });
     }
 
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing authorization header' }, { status: 401 });
     }
 
-    const token = authHeader.replace('Bearer ', '');
+    const token = authHeader.replace('Bearer ', '').trim();
     if (token !== WEBHOOK_TOKEN) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 403 });
     }

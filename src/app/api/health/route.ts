@@ -5,6 +5,7 @@ export async function GET() {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
+    webhookConfigured: Boolean(process.env.WEBHOOK_SECRET_TOKEN?.trim()),
   }, {
     headers: {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
