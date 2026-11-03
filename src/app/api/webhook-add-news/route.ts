@@ -108,6 +108,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    // Connection checks from the automation tool: confirm auth works without publishing anything.
+    if (body.test === true || /^\s*فحص\s+اتصال/.test(String(body.title || ''))) {
+      return NextResponse.json({ success: true, test: true, message: 'Connection OK — test request was not published' });
+    }
+
     if (!body.title || !body.content) {
       return NextResponse.json(
         { error: 'Missing required fields: title, content' },
