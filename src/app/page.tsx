@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import FaqSection from '@/components/FaqSection';
 import { faqSchema, FaqItem } from '@/lib/schema';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
-import { TrendingUp, Newspaper, Globe, Trophy, ChevronLeft, Radio } from 'lucide-react';
+import { TrendingUp, Newspaper, Globe, Trophy, ChevronLeft, Radio, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -57,7 +57,7 @@ async function getFeaturedNews(): Promise<News[]> {
       .not('source_news_id', 'is', null)
       .eq('live_events.status', 'active');
 
-    const linkedNewsIds = linkedNews?.map((item: any) => item.source_news_id).filter(Boolean) || [];
+    const linkedNewsIds = linkedNews?.map((item) => item.source_news_id).filter(Boolean) || [];
 
     const query = supabaseServer
       .from('news')
@@ -97,7 +97,7 @@ async function getLiveEvents(): Promise<LiveEvent[]> {
       return [];
     }
 
-    return data?.map((event: any) => ({
+    return data?.map((event) => ({
       ...event,
       updates_count: event.live_event_updates?.[0]?.count || 0
     })) || [];
@@ -114,7 +114,7 @@ const categories = [
   { name: "رياضية", icon: "Trophy", color: "text-red-500", link: "/sports" },
 ];
 
-const iconMap: Record<string, any> = { Globe, TrendingUp, Newspaper, Trophy };
+const iconMap: Record<string, LucideIcon> = { Globe, TrendingUp, Newspaper, Trophy };
 
 const faqItems: FaqItem[] = [
   {

@@ -1,3 +1,5 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+
 type NewsLike = {
   id: string;
   slug?: string | null;
@@ -30,9 +32,7 @@ type LiveEventRecord = {
   updated_at: string;
 };
 
-type SupabaseLike = {
-  from: (table: string) => any;
-};
+type SupabaseLike = Pick<SupabaseClient, 'from'>;
 
 function buildNewsDetailsUrl(news: Pick<NewsLike, 'id' | 'slug'>) {
   if (news.slug && news.slug.trim().length > 0) {

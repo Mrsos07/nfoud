@@ -1,8 +1,8 @@
 # ---- deps ----
 FROM node:22-slim AS deps
 WORKDIR /app
-COPY package.json ./
-RUN npm install --legacy-peer-deps
+COPY package.json package-lock.json ./
+RUN npm ci --legacy-peer-deps
 
 # ---- build ----
 FROM node:22-slim AS builder

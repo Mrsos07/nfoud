@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { authFetch } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,7 +30,7 @@ export default function AdminCategoriesManager() {
   const fetchCategories = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/categories', { cache: 'no-store' });
+      const response = await authFetch('/api/admin/categories', { cache: 'no-store' });
       const data = (await response.json()) as { items?: CategoryItem[]; error?: string; warning?: string };
       if (!response.ok) throw new Error(data?.error || 'Failed');
       setCategories(data.items ?? []);
@@ -76,7 +77,7 @@ export default function AdminCategoriesManager() {
       const payload = isEdit
         ? { id: editingId, name: form.name, description: form.description, sort_order: form.sort_order }
         : { name: form.name, slug: form.slug, description: form.description, sort_order: form.sort_order };
-      const response = await fetch('/api/admin/categories', {
+      const response = await authFetch('/api/admin/categories', {
         method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -99,7 +100,7 @@ export default function AdminCategoriesManager() {
   const handleDelete = async (category: CategoryItem) => {
     if (!confirm(`هل أنت متأكد من حذف تصنيف "${category.name}"؟`)) return;
     try {
-      const response = await fetch(`/api/admin/categories?id=${encodeURIComponent(category.id)}`, {
+      const response = await authFetch(`/api/admin/categories?id=${encodeURIComponent(category.id)}`, {
         method: 'DELETE',
       });
       const data = await response.json();

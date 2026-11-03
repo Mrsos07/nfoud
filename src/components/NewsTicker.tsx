@@ -46,7 +46,7 @@ export default function NewsTicker({
 
         if (error) throw error;
 
-        const normalized: NewsItem[] = (data || []).map((news: any) => ({
+        const normalized: NewsItem[] = (data || []).map((news) => ({
           id: news.id,
           text: sanitizeText(news.excerpt || news.title || ''),
         }));
@@ -60,7 +60,7 @@ export default function NewsTicker({
         } else if (!stop && filtered.length === 0) {
           setLoading(false);
         }
-      } catch (e: any) {
+      } catch (e) {
         console.error('خطأ في جلب الأخبار:', e);
         if (!stop && items.length === 0) {
           setErr('تعذّر جلب الأخبار');

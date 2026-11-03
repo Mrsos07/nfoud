@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/constants';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'اتصل بنا',

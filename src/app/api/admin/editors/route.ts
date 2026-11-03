@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase';
+import { requireAuth } from '@/lib/require-auth';
 
 const RESERVED_CATEGORY_KEYS = new Set(['id', 'editor_id', 'created_at']);
 
@@ -13,7 +14,10 @@ function extractCategoryValue(row: Record<string, unknown>): string | null {
   return null;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const unauthorized = await requireAuth(request);
+  if (unauthorized) return unauthorized;
+
   const { data, error } = await supabaseServer
     .from('editors')
     .select('id, name, position')
@@ -86,6 +90,9 @@ async function syncCategories(editorId: string, categories: string[]) {
 }
 
 export async function POST(request: Request) {
+  const unauthorized = await requireAuth(request);
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const name = typeof body.name === 'string' ? body.name.trim() : '';
@@ -118,6 +125,9 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const unauthorized = await requireAuth(request);
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const id = typeof body.id === 'string' ? body.id : '';
@@ -162,6 +172,9 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const unauthorized = await requireAuth(request);
+  if (unauthorized) return unauthorized;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

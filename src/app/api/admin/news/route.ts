@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase';
+import { requireAuth } from '@/lib/require-auth';
 
 const DEFAULT_LIMIT = 100;
-
-type EditorSummary = {
-  name: string;
-  position: string | null;
-};
 
 function sanitizeSearchTerm(value: string) {
   return value.replace(/[{},]/g, ' ').replace(/[%]/g, '').trim();
@@ -19,6 +15,9 @@ function buildSearchFilter(query: string) {
 }
 
 export async function GET(request: NextRequest) {
+  const unauthorized = await requireAuth(request);
+  if (unauthorized) return unauthorized;
+
   const searchParams = request.nextUrl.searchParams;
   const id = (searchParams.get('id') || '').trim();
   const page = Math.max(Number(searchParams.get('page') || '1'), 1);
@@ -61,11 +60,11 @@ export async function GET(request: NextRequest) {
   const [{ count, error: countError }, { data, error: dataError }] = await Promise.all([countQuery, dataQuery]);
 
   if (search && (countError || dataError)) {
-    let fallbackCountQuery = supabaseServer
+    const fallbackCountQuery = supabaseServer
       .from('news')
       .select('*', { count: 'exact', head: true });
 
-    let fallbackDataQuery = supabaseServer
+    const fallbackDataQuery = supabaseServer
       .from('news')
       .select('id, title, slug, category, created_at, excerpt, keywords, meta_description, editor_id, editors(name, position)', { count: 'exact' })
       .or(`title.ilike.%${sanitizeSearchTerm(search)}%,excerpt.ilike.%${sanitizeSearchTerm(search)}%,content.ilike.%${sanitizeSearchTerm(search)}%`)
@@ -107,6 +106,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const unauthorized = await requireAuth(request);
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const ids = Array.isArray(body?.ids) ? body.ids.filter((id: unknown): id is string => typeof id === 'string' && id.length > 0) : [];
@@ -130,6 +132,9 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const unauthorized = await requireAuth(request);
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const id = typeof body?.id === 'string' ? body.id : '';

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { authFetch } from '@/lib/auth';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { Search, Trash2, Pencil, ExternalLink, Calendar, ChevronsLeft, ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -73,7 +74,7 @@ export default function AdminNewsManager() {
 
   const fetchEditors = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/editors', { cache: 'no-store' });
+      const response = await authFetch('/api/admin/editors', { cache: 'no-store' });
       const data = (await response.json()) as { items?: EditorItem[] };
 
       if (!response.ok) {
@@ -93,7 +94,7 @@ export default function AdminNewsManager() {
       const params = new URLSearchParams({ page: String(page), limit: '100' });
       if (search.trim()) params.set('q', search.trim());
 
-      const response = await fetch(`/api/admin/news?${params.toString()}`, { cache: 'no-store' });
+      const response = await authFetch(`/api/admin/news?${params.toString()}`, { cache: 'no-store' });
       const data = (await response.json()) as ApiResponse | { error: string };
 
       if (!response.ok || !('items' in data)) {
@@ -199,7 +200,7 @@ export default function AdminNewsManager() {
 
     setSubmitting(true);
     try {
-      const response = await fetch('/api/admin/news', {
+      const response = await authFetch('/api/admin/news', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: selectedIds }),
@@ -224,7 +225,7 @@ export default function AdminNewsManager() {
 
     setSubmitting(true);
     try {
-      const response = await fetch('/api/admin/news', {
+      const response = await authFetch('/api/admin/news', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: [id] }),
@@ -246,7 +247,7 @@ export default function AdminNewsManager() {
   async function openEdit(item: AdminNewsItem) {
     setLoadingEditItem(true);
     try {
-      const response = await fetch(`/api/admin/news?id=${encodeURIComponent(item.id)}`, { cache: 'no-store' });
+      const response = await authFetch(`/api/admin/news?id=${encodeURIComponent(item.id)}`, { cache: 'no-store' });
       const data = (await response.json()) as { item?: AdminNewsItem };
 
       if (!response.ok || !data.item) {
@@ -287,7 +288,7 @@ export default function AdminNewsManager() {
 
     setSubmitting(true);
     try {
-      const response = await fetch('/api/admin/news', {
+      const response = await authFetch('/api/admin/news', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

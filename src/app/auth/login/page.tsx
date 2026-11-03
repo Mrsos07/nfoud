@@ -41,7 +41,8 @@ export default function LoginPage() {
         router.push('/dashboard-control-panel-2025');
         router.refresh();
       }
-    } catch (err: any) {
+    } catch (caught) {
+      const err = caught as { message?: string; name?: string } | null;
       if (err?.message?.includes('fetch') || err?.name === 'TypeError') {
         setError('خطأ في الاتصال بالخادم. تحقق من اتصال الإنترنت.');
       } else {

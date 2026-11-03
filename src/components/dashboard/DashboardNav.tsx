@@ -15,10 +15,11 @@ import {
   Radio
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import type { User } from '@supabase/supabase-js';
 import Image from 'next/image';
 
 interface DashboardNavProps {
-  user: any;
+  user: User;
 }
 
 export default function DashboardNav({ user }: DashboardNavProps) {

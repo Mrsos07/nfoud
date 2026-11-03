@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { validateWordCount, optimizeSEO } from '@/lib/ai-seo';
 import { syncLiveEventFromNews } from '@/lib/live-events';
 
-const WEBHOOK_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || '2080db46-34ae-40f6-bd22-1b88ca0bffa8';
+const WEBHOOK_TOKEN = process.env.WEBHOOK_SECRET_TOKEN || '';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -90,6 +90,11 @@ function generateSlug(title: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!WEBHOOK_TOKEN) {
+      console.error('WEBHOOK_SECRET_TOKEN is not configured');
+      return NextResponse.json({ error: 'Webhook is not configured' }, { status: 503 });
+    }
+
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Missing authorization header' }, { status: 401 });

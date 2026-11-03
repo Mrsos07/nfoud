@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/require-auth';
 
 export async function POST(req: NextRequest) {
+  const unauthorized = await requireAuth(req);
+  if (unauthorized) return unauthorized;
+
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {

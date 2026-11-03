@@ -7,6 +7,8 @@ import { supabaseServer } from '@/lib/supabase';
 import { backfillLiveEventUpdates } from '@/lib/live-events';
 import { LiveEventKeywordAutoSuggest } from '@/components/LiveEventKeywordAutoSuggest';
 import { getCategories } from '@/lib/categories';
+import { isAuthorizedAction } from '@/lib/require-auth';
+import AuthTokenField from '@/components/dashboard/AuthTokenField';
 
 function freshClient() {
   return createClient(
@@ -59,7 +61,7 @@ async function getLiveEvents(): Promise<AdminLiveEvent[]> {
     return [];
   }
 
-  return ((data as unknown as any[]) ?? []).map((event) => ({
+  return ((data as unknown as (AdminLiveEvent & { live_event_updates?: { count: number }[] })[]) ?? []).map((event) => ({
     ...event,
     keywords: Array.isArray(event.keywords) ? event.keywords : null,
     updates_count: event.live_event_updates?.[0]?.count ?? 0,
@@ -97,6 +99,8 @@ function getStatusLabel(status: AdminLiveEvent['status']) {
 async function updateLiveEventStatus(formData: FormData) {
   'use server';
 
+  if (!(await isAuthorizedAction(formData))) return;
+
   const eventId = String(formData.get('eventId') || '');
   const nextStatus = String(formData.get('nextStatus') || '') as AdminLiveEvent['status'];
 
@@ -117,6 +121,8 @@ async function updateLiveEventStatus(formData: FormData) {
 async function updateLiveEvent(formData: FormData) {
   'use server';
 
+  if (!(await isAuthorizedAction(formData))) return;
+
   const eventId = String(formData.get('eventId') || '').trim();
   const title = String(formData.get('title') || '').trim();
   const summary = String(formData.get('summary') || '').trim();
@@ -128,7 +134,7 @@ async function updateLiveEvent(formData: FormData) {
     return;
   }
 
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     title,
     summary: summary || null,
     category,
@@ -167,6 +173,8 @@ async function updateLiveEvent(formData: FormData) {
 async function deleteLiveEvent(formData: FormData) {
   'use server';
 
+  if (!(await isAuthorizedAction(formData))) return;
+
   const eventId = String(formData.get('eventId') || '').trim();
 
   if (!eventId) {
@@ -188,48 +196,10 @@ async function deleteLiveEvent(formData: FormData) {
   revalidatePath('/');
 }
 
-async function syncExistingLiveEvent(formData: FormData) {
-  'use server';
-
-  const eventId = String(formData.get('eventId') || '').trim();
-
-  if (!eventId) {
-    return;
-  }
-
-  const supportsKeywords = await liveEventsSupportsKeywords();
-  const selectFields = supportsKeywords ? 'id, title, summary, category, keywords' : 'id, title, summary, category';
-
-  const { data: event, error } = await supabaseServer
-    .from('live_events')
-    .select(selectFields)
-    .eq('id', eventId)
-    .single();
-
-  if (error || !event) {
-    return;
-  }
-
-  const eventData: any = event;
-  await backfillLiveEventUpdates(supabaseServer, {
-    id: eventData.id,
-    title: eventData.title,
-    summary: eventData.summary,
-    category: eventData.category,
-    keywords: supportsKeywords && Array.isArray(eventData.keywords) ? eventData.keywords : null,
-  }, {
-    days: 365,
-    limit: 2000,
-  });
-
-  revalidatePath('/dashboard-control-panel-2025/live-events');
-  revalidatePath(`/live/${eventId}`);
-  revalidatePath('/live');
-  revalidatePath('/');
-}
-
 async function createManualLiveEvent(formData: FormData) {
   'use server';
+
+  if (!(await isAuthorizedAction(formData))) return;
 
   const title = String(formData.get('title') || '').trim();
   const summary = String(formData.get('summary') || '').trim();
@@ -241,7 +211,7 @@ async function createManualLiveEvent(formData: FormData) {
     return;
   }
 
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     title,
     summary: summary || title,
     category,
@@ -295,6 +265,7 @@ function StatusButton({
 }) {
   return (
     <form action={updateLiveEventStatus}>
+      <AuthTokenField />
       <input type="hidden" name="eventId" value={eventId} />
       <input type="hidden" name="nextStatus" value={nextStatus} />
       <button type="submit" className={`inline-flex min-h-9 items-center justify-center rounded-xl border px-3 py-2 text-xs font-bold shadow-sm transition ${tone}`}>
@@ -368,6 +339,7 @@ async function LiveEventsContent({
             </div>
 
             <form action={createManualLiveEvent} className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <AuthTokenField />
               <input
                 id="create-title"
                 type="text"
@@ -438,6 +410,7 @@ async function LiveEventsContent({
             </div>
 
             <form action={updateLiveEvent} className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <AuthTokenField />
               <input type="hidden" name="eventId" value={editingEvent.id} />
               <input
                 id="edit-title"
@@ -541,6 +514,7 @@ async function LiveEventsContent({
                       <Pencil size={15} />
                     </Link>
                     <form action={deleteLiveEvent}>
+                      <AuthTokenField />
                       <input type="hidden" name="eventId" value={event.id} />
                       <button
                         type="submit"

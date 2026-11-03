@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { authFetch } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -57,7 +58,7 @@ export default function NewNewsPage() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch('/api/admin/editors', { cache: 'no-store' });
+        const response = await authFetch('/api/admin/editors', { cache: 'no-store' });
         const data = (await response.json()) as { items?: EditorItem[] };
         if (response.ok) setEditors(data.items ?? []);
       } catch (error) {
@@ -100,7 +101,8 @@ export default function NewNewsPage() {
 
       const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
       setFormData((prev) => ({ ...prev, image_url: data.publicUrl }));
-    } catch (error: any) {
+    } catch (caught) {
+      const error = caught as Error;
       console.error('Error uploading image:', error);
       alert('فشل رفع الصورة: ' + (error?.message || 'تأكد من إعداد bucket التخزين'));
     } finally {
@@ -129,7 +131,8 @@ export default function NewNewsPage() {
       alert('تم إضافة الخبر بنجاح');
       router.push('/dashboard-control-panel-2025/news');
       router.refresh();
-    } catch (error: any) {
+    } catch (caught) {
+      const error = caught as Error;
       console.error('Error adding news:', error);
       alert('فشل إضافة الخبر: ' + error.message);
     } finally {

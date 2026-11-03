@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { authFetch } from '@/lib/auth';
 import { Sparkles } from 'lucide-react';
 
 interface Props {
@@ -26,7 +27,7 @@ export function KeywordGeneratorButton({ titleInputId, summaryInputId, keywordsI
     setError('');
 
     try {
-      const res = await fetch('/api/generate-keywords', {
+      const res = await authFetch('/api/generate-keywords', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, summary }),

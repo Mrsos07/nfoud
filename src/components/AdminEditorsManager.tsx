@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { authFetch } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -57,7 +58,7 @@ export default function AdminEditorsManager() {
   const fetchEditors = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/editors', { cache: 'no-store' });
+      const response = await authFetch('/api/admin/editors', { cache: 'no-store' });
       const data = (await response.json()) as { items?: EditorItem[] };
       if (!response.ok) throw new Error('Failed to fetch editors');
       setEditors(data.items ?? []);
@@ -109,7 +110,7 @@ export default function AdminEditorsManager() {
     setError('');
     try {
       const isEdit = Boolean(editingId);
-      const response = await fetch('/api/admin/editors', {
+      const response = await authFetch('/api/admin/editors', {
         method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isEdit ? { id: editingId, ...form } : form),
@@ -132,7 +133,7 @@ export default function AdminEditorsManager() {
   const handleDelete = async (editor: EditorItem) => {
     if (!confirm(`هل أنت متأكد من حذف الكاتب "${editor.name}"؟`)) return;
     try {
-      const response = await fetch(`/api/admin/editors?id=${encodeURIComponent(editor.id)}`, {
+      const response = await authFetch(`/api/admin/editors?id=${encodeURIComponent(editor.id)}`, {
         method: 'DELETE',
       });
       const data = await response.json();

@@ -12,8 +12,16 @@ services:
         sync: false
       - key: NEXT_PUBLIC_SITE_URL
         sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: WEBHOOK_SECRET_TOKEN
+        sync: false
+      - key: REVALIDATION_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
       - key: PORT
         value: "10000"
-    healthCheckPath: /
+    healthCheckPath: /api/health
     numInstances: 1
     plan: free

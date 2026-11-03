@@ -40,10 +40,7 @@ export default function NavbarSearch() {
   }, []);
 
   useEffect(() => {
-    if (query.trim().length < 2) {
-      setResults([]);
-      return;
-    }
+    if (query.trim().length < 2) return;
     const timeout = setTimeout(async () => {
       setLoading(true);
       const { data } = await supabase

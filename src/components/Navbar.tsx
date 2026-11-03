@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { getCategoryPath } from '@/lib/utils';
 
 type CategoryLite = { slug: string; name: string };
+
+const subscribeNoop = () => () => {};
 
 const NavbarSearch = dynamic(() => import('@/components/NavbarSearch'), {
   ssr: true,
@@ -16,13 +18,9 @@ const NavbarSearch = dynamic(() => import('@/components/NavbarSearch'), {
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [categories, setCategories] = useState<CategoryLite[]>([]);
   const pathname = usePathname();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     (async () => {

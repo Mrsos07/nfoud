@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { LiveEvent } from '@/types/news';
 import { getCategoryLabel, formatTimeAgo } from '@/lib/utils';
-import { Radio, Clock, MessageSquare } from 'lucide-react';
+import { Clock, MessageSquare } from 'lucide-react';
 import NewsImage from '@/components/NewsImage';
 
 interface LiveEventCardProps {
