@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { authFetch } from '@/lib/auth';
+import { useMounted } from '@/lib/use-mounted';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { Search, Trash2, Pencil, ExternalLink, Calendar, ChevronsLeft, ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -63,14 +64,10 @@ export default function AdminNewsManager() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [loadingEditItem, setLoadingEditItem] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<AdminNewsItem | null>(null);
   const [editForm, setEditForm] = useState({ title: '', excerpt: '', category: 'local', meta_description: '', keywords: '', content: '', editor_id: '' });
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const fetchEditors = useCallback(async () => {
     try {

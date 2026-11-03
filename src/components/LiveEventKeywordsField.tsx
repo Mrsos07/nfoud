@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { authFetch } from '@/lib/auth';
+import { useMounted } from '@/lib/use-mounted';
 import { Sparkles } from 'lucide-react';
 
 interface LiveEventKeywordsFieldProps {
@@ -21,14 +22,10 @@ export function LiveEventKeywordsField({
   defaultValue = '',
   placeholder,
 }: LiveEventKeywordsFieldProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [value, setValue] = useState(defaultValue);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleGenerate = async () => {
     const title = (document.getElementById(titleInputId) as HTMLInputElement | null)?.value?.trim() || '';

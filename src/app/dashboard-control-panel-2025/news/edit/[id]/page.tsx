@@ -58,10 +58,6 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
   });
 
   useEffect(() => {
-    loadNews();
-  }, [id]);
-
-  useEffect(() => {
     (async () => {
       try {
         const response = await authFetch('/api/admin/editors', { cache: 'no-store' });
@@ -124,6 +120,10 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadNews();
+  }, [id]);
 
   const handleImageUpload = async (file: File) => {
     setUploading(true);
